@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/* Bat dark mode kieu "attribute-based" thay vi chi theo he thong:
+   <html data-theme="dark"> do ThemeToggle bat/tat, luu lai o localStorage. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --paper: #fbfaf6;
+  --paper-dim: #f3f1e9;
+  --ink: #1f2a24;
+  --ink-soft: #4a534c;
+  --muted: #83897f;
+  --line: #dfdacb;
+  --accent: #2e6f4e;
+  --accent-soft: #e4ede7;
+  --gold: #a97f3f;
+  --gold-soft: #f1e6d3;
+}
+
+[data-theme="light"] {
+  --paper: #fbfaf6;
+  --paper-dim: #f3f1e9;
+  --ink: #1f2a24;
+  --ink-soft: #4a534c;
+  --muted: #83897f;
+  --line: #dfdacb;
+  --accent: #2e6f4e;
+  --accent-soft: #e4ede7;
+  --gold: #a97f3f;
+  --gold-soft: #f1e6d3;
+}
+
+[data-theme="dark"] {
+  --paper: #141815;
+  --paper-dim: #1b201b;
+  --ink: #ece8df;
+  --ink-soft: #b9c0b6;
+  --muted: #808779;
+  --line: #333a30;
+  --accent: #6fbf95;
+  --accent-soft: #1f3327;
+  --gold: #d8ac6c;
+  --gold-soft: #33291a;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-dim: var(--paper-dim);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+/* ----- CV: che do in / xuat PDF - luon in nen trang, khong theo dark mode ----- */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 12mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #1f2a24 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-area {
+    width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+}

@@ -1,0 +1,148 @@
+// Prisma schema cho Portfolio + CV website
+// Chạy: npx prisma migrate dev --name init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Thông tin cá nhân — chỉ có duy nhất 1 record (singleton)
+model Profile {
+  id          Int      @id @default(autoincrement())
+  name        String
+  titleVi     String // vd: "Kỹ sư Công nghệ thông tin"
+  titleEn     String // vd: "Fullstack Web Developer"
+  email       String
+  phone       String
+  location    String
+  github      String?
+  linkedin    String?
+  avatarUrl   String?
+  summaryVi   String   @db.Text
+  summaryEn   String   @db.Text
+  updatedAt   DateTime @updatedAt
+}
+
+model Education {
+  id          Int      @id @default(autoincrement())
+  school      String
+  degreeVi    String
+  degreeEn    String
+  gpa         Float?
+  startYear   Int
+  endYear     Int?
+  statusVi    String? // "Đang học", "Tốt nghiệp loại Xuất sắc..."
+  statusEn    String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  visible     Boolean  @default(true)
+}
+
+model Experience {
+  id          Int      @id @default(autoincrement())
+  company     String
+  roleVi      String
+  roleEn      String
+  startDate   String // "10/2024"
+  endDate     String? // null = hiện tại
+  bulletsVi   String[] // mảng gạch đầu dòng
+  bulletsEn   String[]
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  visible     Boolean  @default(true)
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  nameVi      String
+  nameEn      String
+  descVi      String   @db.Text
+  descEn      String   @db.Text
+  techs       String[] // ["PHP", "MySQL", "Bootstrap"]
+  status      String   @default("in_progress") // done | in_progress
+  startDate   String?
+  endDate     String?
+  githubUrl   String?
+  demoUrl     String?
+  coverImage  String?
+  featured    Boolean  @default(false)
+  order       Int      @default(0)
+  media       Media[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  visible     Boolean  @default(true)
+}
+
+// Anh/video minh hoa cho 1 du an - 1 du an co the co nhieu media, sap xep theo "order"
+model Media {
+  id        Int      @id @default(autoincrement())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId Int
+  url       String
+  type      String   @default("image") // "image" | "video"
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model SkillGroup {
+  id       Int     @id @default(autoincrement())
+  labelVi  String // "Back-end", "Front-end", "CSDL", "Công cụ"
+  labelEn  String
+  items    String[] // ["PHP", "RESTful API", "MVC Architecture"]
+  order    Int     @default(0)
+  visible     Boolean  @default(true)
+}
+
+model Certificate {
+  id        Int      @id @default(autoincrement())
+  nameVi    String
+  nameEn    String
+  issuer    String
+  issueDate DateTime
+  code      String?
+  imageUrl  String?
+  order     Int      @default(0)
+  visible     Boolean  @default(true)
+}
+
+model Achievement {
+  id         Int      @id @default(autoincrement())
+  titleVi    String
+  titleEn    String
+  descVi     String?  @db.Text
+  descEn     String?  @db.Text
+  date       DateTime?
+  imageUrl   String?
+  order      Int      @default(0)
+  visible     Boolean  @default(true)
+}
+
+model Document {
+  id        Int      @id @default(autoincrement())
+  titleVi   String
+  titleEn   String
+  fileUrl   String
+  createdAt DateTime @default(now())
+  visible     Boolean  @default(true)
+}
+
+// Dieu khien phan nao hien tren trang chu (book) va thu tu cua chung.
+// key co dinh: "cover" | "intro" | "projects" | "skills"
+model HomeSection {
+  id      Int     @id @default(autoincrement())
+  key     String  @unique
+  labelVi String
+  visible Boolean @default(true)
+  order   Int     @default(0)
+}
+
+// Tài khoản admin duy nhất để đăng nhập trang quản trị
+model AdminUser {
+  id           Int    @id @default(autoincrement())
+  username     String @unique
+  passwordHash String
+}
